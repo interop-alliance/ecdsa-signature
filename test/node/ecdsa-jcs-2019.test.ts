@@ -1,47 +1,64 @@
 /*!
- * Copyright (c) 2023-2024 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2024 Digital Bazaar, Inc. All rights reserved.
  */
 import { beforeAll, describe, expect, it } from 'vitest'
 
-import jsigs from 'jsonld-signatures'
+import jsigs from '@interop/jsonld-signatures'
 const {
   purposes: { AssertionProofPurpose }
-} = jsigs
+} = jsigs as any
 
-import * as EcdsaMultikey from '@digitalbazaar/ecdsa-multikey'
+import * as EcdsaMultikey from '@interop/ecdsa-multikey'
+import {
+  createSignCryptosuite,
+  createVerifyCryptosuite
+} from '../../src/index.js'
 import {
   credential,
   ecdsaMultikeyKeyPair,
   ecdsaSecp256KeyPair
 } from '../mock-data.js'
-import { DataIntegrityProof } from '@digitalbazaar/data-integrity'
-import { cryptosuite as ecdsa2019Cryptosuite } from '../../src/index.js'
+import { DataIntegrityProof } from '@interop/data-integrity-proof'
 
 import { loader } from '../documentLoader.js'
 
 const documentLoader = loader.build()
 
-describe('Ecdsa2019Cryptosuite', () => {
+describe('ecdsa-jcs-2019', () => {
   describe('exports', () => {
     it('it should have proper exports', async () => {
+      // sign cryptosuite
+      let ecdsa2019Cryptosuite = createSignCryptosuite()
       expect(ecdsa2019Cryptosuite).toBeDefined()
-      expect(ecdsa2019Cryptosuite.name).toBe('ecdsa-rdfc-2019')
+      expect(ecdsa2019Cryptosuite.name).toBe('ecdsa-jcs-2019')
       expect(ecdsa2019Cryptosuite.requiredAlgorithm).toEqual(['P-256', 'P-384'])
       expect(typeof ecdsa2019Cryptosuite.canonize).toBe('function')
       expect(typeof ecdsa2019Cryptosuite.createVerifier).toBe('function')
+      expect(typeof ecdsa2019Cryptosuite.createVerifyData).toBe('function')
+      // verify cryptosuite
+      ecdsa2019Cryptosuite = createVerifyCryptosuite() as any
+      expect(ecdsa2019Cryptosuite.name).toBe('ecdsa-jcs-2019')
+      expect(ecdsa2019Cryptosuite.requiredAlgorithm).toEqual(['P-256', 'P-384'])
+      expect(typeof ecdsa2019Cryptosuite.canonize).toBe('function')
+      expect(typeof ecdsa2019Cryptosuite.createVerifier).toBe('function')
+      expect(typeof ecdsa2019Cryptosuite.createVerifyData).toBe('function')
+    })
+
+    it('sign cryptosuite throws if createVerifier is called', () => {
+      const cs = createSignCryptosuite()
+      expect(() => cs.createVerifier()).toThrow()
     })
   })
 
   describe('canonize()', () => {
-    it('should canonize using RDFC-1.0 w/ n-quads', async () => {
+    it('should canonize using JCS', async () => {
       const unsignedCredential = JSON.parse(JSON.stringify(credential))
+      const ecdsa2019Cryptosuite = createSignCryptosuite()
 
       let result
-      let error
+      let error: any
       try {
-        result = await ecdsa2019Cryptosuite.canonize(unsignedCredential, {
-          documentLoader
-        })
+        result = await ecdsa2019Cryptosuite.canonize(unsignedCredential)
       } catch (e) {
         console.log('e', e)
         error = e
@@ -49,23 +66,19 @@ describe('Ecdsa2019Cryptosuite', () => {
 
       expect(error).toBeUndefined()
       expect(result).toBeDefined()
-      const expectedResult = `<http://example.edu/credentials/1872> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://schema.org#AlumniCredential> .
-<http://example.edu/credentials/1872> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/2018/credentials#VerifiableCredential> .
-<http://example.edu/credentials/1872> <https://www.w3.org/2018/credentials#credentialSubject> <https://example.edu/students/alice> .
-<http://example.edu/credentials/1872> <https://www.w3.org/2018/credentials#issuanceDate> "2010-01-01T19:23:24Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.edu/credentials/1872> <https://www.w3.org/2018/credentials#issuer> <https://example.edu/issuers/565049> .
-<https://example.edu/students/alice> <https://schema.org#alumniOf> "Example University" .\n`
+      const expectedResult = `{"@context":["https://www.w3.org/2018/credentials/v1",{"AlumniCredential":"https://schema.org#AlumniCredential","alumniOf":"https://schema.org#alumniOf"},"https://w3id.org/security/data-integrity/v2"],"credentialSubject":{"alumniOf":"Example University","id":"https://example.edu/students/alice"},"id":"http://example.edu/credentials/1872","issuanceDate":"2010-01-01T19:23:24Z","issuer":"https://example.edu/issuers/565049","type":["VerifiableCredential","AlumniCredential"]}`
       expect(result).toBe(expectedResult)
     })
   })
 
   describe('createVerifier()', () => {
     it('should create a verifier with ECDSA Multikey', async () => {
-      let verifier
-      let error
+      let verifier: any
+      let error: any
       try {
+        const ecdsa2019Cryptosuite = createVerifyCryptosuite()
         verifier = await ecdsa2019Cryptosuite.createVerifier({
-          verificationMethod: { ...ecdsaMultikeyKeyPair }
+          verificationMethod: { ...ecdsaMultikeyKeyPair } as any
         })
       } catch (e) {
         error = e
@@ -82,10 +95,11 @@ describe('Ecdsa2019Cryptosuite', () => {
     })
 
     it('should create a verifier with EcdsaSecp256r1VerificationKey2019', async () => {
-      let verifier
-      let error
-      const keyPair = await EcdsaMultikey.from({ ...ecdsaSecp256KeyPair })
+      let verifier: any
+      let error: any
+      const keyPair: any = await EcdsaMultikey.from({ ...ecdsaSecp256KeyPair })
       try {
+        const ecdsa2019Cryptosuite = createVerifyCryptosuite()
         verifier = await ecdsa2019Cryptosuite.createVerifier({
           verificationMethod: keyPair
         })
@@ -104,11 +118,12 @@ describe('Ecdsa2019Cryptosuite', () => {
     })
 
     it('should fail to create a verifier w/ unsupported key type', async () => {
-      let verifier
-      let error
-      const keyPair = await EcdsaMultikey.from({ ...ecdsaSecp256KeyPair })
+      let verifier: any
+      let error: any
+      const keyPair: any = await EcdsaMultikey.from({ ...ecdsaSecp256KeyPair })
       keyPair.type = 'BadKeyType'
       try {
+        const ecdsa2019Cryptosuite = createVerifyCryptosuite()
         verifier = await ecdsa2019Cryptosuite.createVerifier({
           verificationMethod: keyPair
         })
@@ -125,15 +140,16 @@ describe('Ecdsa2019Cryptosuite', () => {
   describe('sign()', () => {
     it('should sign a document', async () => {
       const unsignedCredential = JSON.parse(JSON.stringify(credential))
-      const keyPair = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
+      const keyPair: any = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
       const date = '2023-03-01T21:29:24Z'
+      const ecdsa2019Cryptosuite = createSignCryptosuite()
       const suite = new DataIntegrityProof({
         signer: keyPair.signer(),
         date,
         cryptosuite: ecdsa2019Cryptosuite
       })
 
-      let error
+      let error: any
       try {
         await jsigs.sign(unsignedCredential, {
           suite,
@@ -147,19 +163,20 @@ describe('Ecdsa2019Cryptosuite', () => {
       expect(error).toBeUndefined()
     })
 
-    it('should fail to sign with undefined term', async () => {
+    it('should still sign even with undefined term as JCS does not check terms', async () => {
       const unsignedCredential = JSON.parse(JSON.stringify(credential))
       unsignedCredential.undefinedTerm = 'foo'
 
-      const keyPair = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
+      const keyPair: any = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
       const date = '2023-03-01T21:29:24Z'
+      const ecdsa2019Cryptosuite = createSignCryptosuite()
       const suite = new DataIntegrityProof({
         signer: keyPair.signer(),
         date,
         cryptosuite: ecdsa2019Cryptosuite
       })
 
-      let error
+      let error: any
       try {
         await jsigs.sign(unsignedCredential, {
           suite,
@@ -170,23 +187,23 @@ describe('Ecdsa2019Cryptosuite', () => {
         error = e
       }
 
-      expect(error).toBeDefined()
-      expect(error.name).toBe('jsonld.ValidationError')
+      expect(error).toBeUndefined()
     })
 
-    it('should fail to sign with relative type URL', async () => {
+    it('should still sign even with relative type URL as JCS does not check relative type URL', async () => {
       const unsignedCredential = JSON.parse(JSON.stringify(credential))
       unsignedCredential.type.push('UndefinedType')
 
-      const keyPair = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
+      const keyPair: any = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
       const date = '2023-03-01T21:29:24Z'
+      const ecdsa2019Cryptosuite = createSignCryptosuite()
       const suite = new DataIntegrityProof({
         signer: keyPair.signer(),
         date,
         cryptosuite: ecdsa2019Cryptosuite
       })
 
-      let error
+      let error: any
       try {
         await jsigs.sign(unsignedCredential, {
           suite,
@@ -197,17 +214,17 @@ describe('Ecdsa2019Cryptosuite', () => {
         error = e
       }
 
-      expect(error).toBeDefined()
-      expect(error.name).toBe('jsonld.ValidationError')
+      expect(error).toBeUndefined()
     })
 
     it('should fail to sign with incorrect signer algorithm', async () => {
-      const keyPair = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
+      const keyPair: any = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
       const date = '2023-03-01T21:29:24Z'
       const signer = keyPair.signer()
       signer.algorithm = 'wrong-algorithm'
 
-      let error
+      const ecdsa2019Cryptosuite = createSignCryptosuite()
+      let error: any
       try {
         new DataIntegrityProof({
           signer,
@@ -230,13 +247,14 @@ describe('Ecdsa2019Cryptosuite', () => {
   })
 
   describe('verify()', () => {
-    let signedCredential
+    let signedCredential: any
 
     beforeAll(async () => {
       const unsignedCredential = JSON.parse(JSON.stringify(credential))
 
-      const keyPair = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
+      const keyPair: any = await EcdsaMultikey.from({ ...ecdsaMultikeyKeyPair })
       const date = '2023-03-01T21:29:24Z'
+      const ecdsa2019Cryptosuite = createSignCryptosuite()
       const suite = new DataIntegrityProof({
         signer: keyPair.signer(),
         date,
@@ -251,10 +269,11 @@ describe('Ecdsa2019Cryptosuite', () => {
     })
 
     it('should verify a document', async () => {
+      const ecdsa2019Cryptosuite = createVerifyCryptosuite()
       const suite = new DataIntegrityProof({
         cryptosuite: ecdsa2019Cryptosuite
       })
-      const result = await jsigs.verify(signedCredential, {
+      const result: any = await jsigs.verify(signedCredential, {
         suite,
         purpose: new AssertionProofPurpose(),
         documentLoader
@@ -264,6 +283,7 @@ describe('Ecdsa2019Cryptosuite', () => {
     })
 
     it('should fail verification if "proofValue" is not string', async () => {
+      const ecdsa2019Cryptosuite = createVerifyCryptosuite()
       const suite = new DataIntegrityProof({
         cryptosuite: ecdsa2019Cryptosuite
       })
@@ -271,7 +291,7 @@ describe('Ecdsa2019Cryptosuite', () => {
       // intentionally modify proofValue type to not be string
       signedCredentialCopy.proof.proofValue = {}
 
-      const result = await jsigs.verify(signedCredentialCopy, {
+      const result: any = await jsigs.verify(signedCredentialCopy, {
         suite,
         purpose: new AssertionProofPurpose(),
         documentLoader
@@ -287,6 +307,7 @@ describe('Ecdsa2019Cryptosuite', () => {
     })
 
     it('should fail verification if "proofValue" is not given', async () => {
+      const ecdsa2019Cryptosuite = createVerifyCryptosuite()
       const suite = new DataIntegrityProof({
         cryptosuite: ecdsa2019Cryptosuite
       })
@@ -294,7 +315,7 @@ describe('Ecdsa2019Cryptosuite', () => {
       // intentionally modify proofValue to be undefined
       signedCredentialCopy.proof.proofValue = undefined
 
-      const result = await jsigs.verify(signedCredentialCopy, {
+      const result: any = await jsigs.verify(signedCredentialCopy, {
         suite,
         purpose: new AssertionProofPurpose(),
         documentLoader
@@ -310,6 +331,7 @@ describe('Ecdsa2019Cryptosuite', () => {
     })
 
     it('should fail verification if proofValue string does not start with "z"', async () => {
+      const ecdsa2019Cryptosuite = createVerifyCryptosuite()
       const suite = new DataIntegrityProof({
         cryptosuite: ecdsa2019Cryptosuite
       })
@@ -317,7 +339,7 @@ describe('Ecdsa2019Cryptosuite', () => {
       // intentionally modify proofValue to not start with 'z'
       signedCredentialCopy.proof.proofValue = 'a'
 
-      const result = await jsigs.verify(signedCredentialCopy, {
+      const result: any = await jsigs.verify(signedCredentialCopy, {
         suite,
         purpose: new AssertionProofPurpose(),
         documentLoader
@@ -327,10 +349,10 @@ describe('Ecdsa2019Cryptosuite', () => {
 
       expect(result.verified).toBe(false)
       expect(errors[0].name).toBe('Error')
-      expect(errors[0].message).toContain('base58btc')
     })
 
     it('should fail verification if proof type is not DataIntegrityProof', async () => {
+      const ecdsa2019Cryptosuite = createVerifyCryptosuite()
       const suite = new DataIntegrityProof({
         cryptosuite: ecdsa2019Cryptosuite
       })
@@ -338,7 +360,7 @@ describe('Ecdsa2019Cryptosuite', () => {
       // intentionally modify proof type to be InvalidSignature2100
       signedCredentialCopy.proof.type = 'InvalidSignature2100'
 
-      const result = await jsigs.verify(signedCredentialCopy, {
+      const result: any = await jsigs.verify(signedCredentialCopy, {
         suite,
         purpose: new AssertionProofPurpose(),
         documentLoader

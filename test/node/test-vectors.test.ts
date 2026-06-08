@@ -1,18 +1,18 @@
 /*!
  * Copyright (c) 2023-2024 Digital Bazaar, Inc. All rights reserved.
  */
-import * as EcdsaMultikey from '@digitalbazaar/ecdsa-multikey'
+import * as EcdsaMultikey from '@interop/ecdsa-multikey'
 import { cryptosuite } from '../../src/index.js'
-import { DataIntegrityProof } from '@digitalbazaar/data-integrity'
+import { DataIntegrityProof } from '@interop/data-integrity-proof'
 import { beforeAll, describe, expect, it } from 'vitest'
-import jsigs from 'jsonld-signatures'
+import jsigs from '@interop/jsonld-signatures'
 import { loader } from '../documentLoader.js'
 
 import * as testVectors from '../test-vectors.js'
 
 const {
   purposes: { AssertionProofPurpose }
-} = jsigs
+} = jsigs as any
 
 const documentLoader = loader.build()
 
@@ -38,8 +38,8 @@ function addTests({ curve, keyMaterial, signedFixture }: any) {
     const signer = keyPair.signer()
     const date = new Date(signedFixture.proof.created)
 
-    let error
-    let signed
+    let error: any
+    let signed: any
     try {
       signed = await jsigs.sign(unsigned, {
         suite: new DataIntegrityProof({ cryptosuite, signer, date }),
@@ -60,7 +60,7 @@ function addTests({ curve, keyMaterial, signedFixture }: any) {
     expect(signed).toEqual(modified)
 
     // ensure generated signed document verifies
-    const result = await jsigs.verify(signed, {
+    const result: any = await jsigs.verify(signed, {
       suite: new DataIntegrityProof({ cryptosuite }),
       purpose: new AssertionProofPurpose(),
       documentLoader
@@ -70,7 +70,7 @@ function addTests({ curve, keyMaterial, signedFixture }: any) {
   })
 
   it(`should verify ${curve} signed fixture`, async () => {
-    const result = await jsigs.verify(signedFixture, {
+    const result: any = await jsigs.verify(signedFixture, {
       suite: new DataIntegrityProof({ cryptosuite }),
       purpose: new AssertionProofPurpose(),
       documentLoader

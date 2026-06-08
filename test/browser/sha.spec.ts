@@ -10,10 +10,16 @@ test('hashes a string via Web Crypto in-browser', async ({ page }) => {
   await page.goto('/test/index.html')
 
   const hex = await page.evaluate(async () => {
-    const { sha } = await import('/src/sha-browser.ts')
-    const digest = await sha({ algorithm: 'SHA-256', string: 'abc' })
+    // Variable specifier (not a literal) so tsc doesn't try to resolve the
+    // Vite-served URL; the dev server resolves it at runtime.
+    const moduleUrl = '/src/core/sha-browser.ts'
+    const { sha } = await import(moduleUrl)
+    const digest: Uint8Array = await sha({
+      algorithm: 'SHA-256',
+      string: 'abc'
+    })
     return Array.from(digest)
-      .map(b => b.toString(16).padStart(2, '0'))
+      .map((b: number) => b.toString(16).padStart(2, '0'))
       .join('')
   })
 
