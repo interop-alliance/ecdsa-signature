@@ -1,24 +1,24 @@
 /*!
  * Copyright (c) 2023-2025 Digital Bazaar, Inc. All rights reserved.
  */
-import * as didMethodKey from '@digitalbazaar/did-method-key'
-import * as EcdsaMultikey from '@digitalbazaar/ecdsa-multikey'
+import * as didMethodKey from '@interop/did-method-key'
+import * as EcdsaMultikey from '@interop/ecdsa-multikey'
 import {
   citizenshipV4RC1Context,
   controllerDocEcdsaMultikey,
   ecdsaMultikeyKeyPair,
   mockPublicEcdsaMultikey
 } from './mock-data.js'
-import { CachedResolver } from '@digitalbazaar/did-io'
-import dataIntegrityContext from '@digitalbazaar/data-integrity-context'
-import multikeyContext from '@digitalbazaar/multikey-context'
-import { securityLoader } from '@digitalbazaar/security-document-loader'
+import { CachedResolver } from '@interop/did-io'
+import { securityLoader } from '@interop/security-document-loader'
 
+// `securityLoader()` already bundles the common security contexts (Multikey,
+// Data Integrity v2, DID v1, VC v1/v2). Only the contexts it does not bundle
+// are added statically below.
 export const loader = securityLoader()
 
 const resolver = new CachedResolver()
 const didKeyDriver = didMethodKey.driver()
-console.log('didKeyDriver', didKeyDriver)
 didKeyDriver.use({
   multibaseMultikeyHeader: 'zDna',
   fromMultibase: EcdsaMultikey.from
@@ -32,16 +32,6 @@ loader.setDidResolver(resolver)
 
 loader.addStatic(ecdsaMultikeyKeyPair.controller, controllerDocEcdsaMultikey)
 loader.addStatic(mockPublicEcdsaMultikey.id, mockPublicEcdsaMultikey)
-
-loader.addStatic(
-  dataIntegrityContext.constants.CONTEXT_URL,
-  dataIntegrityContext.contexts.get(dataIntegrityContext.constants.CONTEXT_URL)
-)
-
-loader.addStatic(
-  multikeyContext.constants.CONTEXT_URL,
-  multikeyContext.contexts.get(multikeyContext.constants.CONTEXT_URL)
-)
 
 loader.addStatic('https://www.w3.org/ns/credentials/examples/v2', {
   '@context': {

@@ -1,4 +1,26 @@
-# @digitalbazaar/ecdsa-rdfc-2019-cryptosuite Changelog
+# @interop/ecdsa-signature Changelog
+
+## 0.1.0 - TBD
+
+### Changed
+
+- **BREAKING**: Renamed the package to `@interop/ecdsa-signature` and merged the
+  `@digitalbazaar/ecdsa-jcs-2019-cryptosuite` library in, so one package now
+  provides both the `ecdsa-rdfc-2019` and `ecdsa-jcs-2019` cryptosuites.
+- **BREAKING**: Switched runtime dependencies to the `@interop/*` forks
+  (`@interop/ecdsa-multikey`, `@interop/jsonld`) and adopted
+  `@interop/data-integrity-core` / `@interop/data-integrity-proof` types.
+- Reorganized `src/` into a thin shared `core/` plus per-suite
+  `ecdsa-rdfc-2019/` and `ecdsa-jcs-2019/` directories, each with its own
+  subpath export (`@interop/ecdsa-signature/ecdsa-rdfc-2019`,
+  `@interop/ecdsa-signature/ecdsa-jcs-2019`).
+
+### Added
+
+- `ecdsa-jcs-2019` cryptosuite via `createSignCryptosuite()` /
+  `createVerifyCryptosuite()`.
+- The RDFC suite is now exported as `ecdsaRdfc2019`. The previous `cryptosuite`
+  export is retained as a backward-compatible alias of it.
 
 ## 1.3.1 - TBD
 
