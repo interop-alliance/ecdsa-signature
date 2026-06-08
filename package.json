@@ -46,10 +46,10 @@
     "typecheck": "tsc -p tsconfig.dev.json --noEmit",
     "prepare": "pnpm run build",
     "rebuild": "pnpm run clear && pnpm run build",
-    "test": "pnpm run fix && pnpm run lint && pnpm run test-node && pnpm run test-browser",
-    "test-node": "vitest run",
-    "test-browser": "playwright test",
-    "test-coverage": "vitest run --coverage"
+    "test": "pnpm run fix && pnpm run lint && pnpm run test:node && pnpm run test:browser",
+    "test:node": "vitest run",
+    "test:browser": "playwright test",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@interop/ecdsa-multikey": "^2.0.1",

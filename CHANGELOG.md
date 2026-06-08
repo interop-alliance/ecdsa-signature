@@ -19,6 +19,9 @@
 
 - `ecdsa-jcs-2019` cryptosuite via `createSignCryptosuite()` /
   `createVerifyCryptosuite()`.
+- `EcdsaJcs2019` -- a `DataIntegrityProof` subclass that bakes in the
+  `ecdsa-jcs-2019` sign cryptosuite, for consumers that instantiate a suite by
+  class (e.g. `@interop/ezcap`'s `ZcapClient`).
 - The RDFC suite is now exported as `ecdsaRdfc2019`. The previous `cryptosuite`
   export is retained as a backward-compatible alias of it.
 
