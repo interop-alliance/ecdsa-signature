@@ -1,7 +1,6 @@
 # ECDSA RDFC 2019 Data Integrity Cryptosuite _(@digitalbazaar/ecdsa-rdfc-2019-cryptosuite)_
 
-[![Build status](https://img.shields.io/github/actions/workflow/status/digitalbazaar/ecdsa-rdfc-2019-cryptosuite/main.yml)](https://github.com/digitalbazaar/ecdsa-rdfc-2019-cryptosuite/actions?query=workflow%3A%22Node.js+CI%22)
-[![Coverage status](https://img.shields.io/codecov/c/github/digitalbazaar/ecdsa-rdfc-2019-cryptosuite)](https://codecov.io/gh/digitalbazaar/ecdsa-rdfc-2019-cryptosuite)
+[![Build status](https://img.shields.io/github/actions/workflow/status/digitalbazaar/ecdsa-rdfc-2019-cryptosuite/ci.yml)](https://github.com/digitalbazaar/ecdsa-rdfc-2019-cryptosuite/actions?query=workflow%3ACI)
 [![NPM Version](https://img.shields.io/npm/v/@digitalbazaar/ecdsa-rdfc-2019-cryptosuite.svg)](https://npm.im/@digitalbazaar/ecdsa-rdfc-2019-cryptosuite)
 
 > ECDSA RDFC 2019 Data Integrity Cryptosuite for use with jsonld-signatures.
@@ -22,7 +21,7 @@ For use with https://github.com/digitalbazaar/jsonld-signatures v11.0 and above.
 
 See also related specs:
 
-* [Verifiable Credential Data Integrity](https://w3c.github.io/vc-data-integrity/)
+- [Verifiable Credential Data Integrity](https://w3c.github.io/vc-data-integrity/)
 
 ## Security
 
@@ -30,7 +29,7 @@ TBD
 
 ## Install
 
-- Browsers and Node.js 18+ are supported.
+- Browsers and Node.js 24+ are supported.
 
 To install from NPM:
 
@@ -43,13 +42,13 @@ To install locally (for development):
 ```
 git clone https://github.com/digitalbazaar/ecdsa-rdfc-2019-cryptosuite.git
 cd ecdsa-rdfc-2019-cryptosuite
-npm install
+pnpm install
 ```
 
 ## Usage
 
-The following code snippet provides a complete example of digitally signing
-a verifiable credential using this library:
+The following code snippet provides a complete example of digitally signing a
+verifiable credential using this library:
 
 ```javascript
 import * as EcdsaMultikey from '@digitalbazaar/ecdsa-multikey';
@@ -151,7 +150,8 @@ const signedCredential = await jsigs.sign(unsignedCredential, {
 
 ## Contribute
 
-See [the contribute file](https://github.com/digitalbazaar/bedrock/blob/master/CONTRIBUTING.md)!
+See
+[the contribute file](https://github.com/digitalbazaar/bedrock/blob/master/CONTRIBUTING.md)!
 
 PRs accepted.
 
@@ -160,8 +160,8 @@ If editing the Readme, please conform to the
 
 ## Commercial Support
 
-Commercial support for this library is available upon request from
-Digital Bazaar: support@digitalbazaar.com
+Commercial support for this library is available upon request from Digital
+Bazaar: support@digitalbazaar.com
 
 ## License
 
