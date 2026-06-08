@@ -4,14 +4,14 @@
 /**
  * Concatenates two Uint8Arrays into a new one.
  *
- * @param b1 - The first array.
- * @param b2 - The second array.
+ * @param buffer1 - The first array.
+ * @param buffer2 - The second array.
  *
- * @returns The concatenation of `b1` followed by `b2`.
+ * @returns The concatenation of `buffer1` followed by `buffer2`.
  */
-export function concat(b1: Uint8Array, b2: Uint8Array): Uint8Array {
-  const rval = new Uint8Array(b1.length + b2.length)
-  rval.set(b1, 0)
-  rval.set(b2, b1.length)
-  return rval
+export function concat(buffer1: Uint8Array, buffer2: Uint8Array): Uint8Array {
+  const combined = new Uint8Array(buffer1.length + buffer2.length)
+  combined.set(buffer1, 0)
+  combined.set(buffer2, buffer1.length)
+  return combined
 }

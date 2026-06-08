@@ -165,6 +165,25 @@ const result = await jsigs.verify(signed, {
 })
 ```
 
+#### `EcdsaJcs2019` suite class
+
+For consumers that instantiate a suite **by class** rather than by passing a
+cryptosuite -- e.g.
+[`@interop/ezcap`](https://github.com/interop-alliance/ezcap)'s `ZcapClient` --
+`EcdsaJcs2019` is a thin `DataIntegrityProof` subclass that bakes in the sign
+cryptosuite, exposing a `new EcdsaJcs2019({ signer, date })` constructor. Use
+`createVerifyCryptosuite()` for the verification side.
+
+```js
+import { EcdsaJcs2019 } from '@interop/ecdsa-signature'
+
+const signed = await jsigs.sign(unsignedCredential, {
+  suite: new EcdsaJcs2019({ signer: keyPair.signer() }),
+  purpose: new AssertionProofPurpose(),
+  documentLoader
+})
+```
+
 ### Verifying a mixed proof set
 
 A single credential can carry both an `ecdsa-rdfc-2019` and an `ecdsa-jcs-2019`
@@ -189,9 +208,18 @@ The two suites expose intentionally different shapes, because the specs do:
 - `ecdsa-rdfc-2019` is a single static object (`ecdsaRdfc2019`) used for both
   signing and verifying.
 - `ecdsa-jcs-2019` is a pair of factories (`createSignCryptosuite()` /
-  `createVerifyCryptosuite()`).
+  `createVerifyCryptosuite()`), because its sign and verify paths reconcile
+  proof/document `@context` differently.
 
-Both are consumed identically through `new DataIntegrityProof({ cryptosuite })`.
+Both are consumed the same way: `new DataIntegrityProof({ cryptosuite })`.
+
+For the JCS suite there is additionally an `EcdsaJcs2019` class -- a
+`DataIntegrityProof` subclass with the sign cryptosuite baked in -- for callers
+that select a suite by class rather than by cryptosuite (e.g. `@interop/ezcap`'s
+`ZcapClient`). It is sign-side only; verification still uses
+`new DataIntegrityProof({ cryptosuite: createVerifyCryptosuite() })`. The RDFC
+suite needs no such class: its single static object already works wherever a
+cryptosuite is expected.
 
 ## Contribute
 
@@ -199,4 +227,4 @@ PRs accepted.
 
 ## License
 
-[New BSD License (3-clause)](LICENSE)
+[New BSD License (3-clause)](LICENSE) © 2023 Digital Bazaar
