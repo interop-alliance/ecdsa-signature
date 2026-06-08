@@ -1,6 +1,6 @@
 {
   "name": "@interop/ecdsa-signature",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "ECDSA Data Integrity cryptosuites (ecdsa-rdfc-2019, ecdsa-jcs-2019) in TypeScript.",
   "homepage": "https://github.com/interop-alliance/ecdsa-signature",
   "repository": {

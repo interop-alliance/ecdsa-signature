@@ -1,6 +1,6 @@
 # @interop/ecdsa-signature Changelog
 
-## 2.0.0 - 2026-06-08
+## 2.0.0-2.0.1 - 2026-06-08
 
 ### Changed
 
