@@ -1,6 +1,6 @@
 # @interop/ecdsa-signature Changelog
 
-## 0.1.0 - TBD
+## 2.0.0 - 2026-06-08
 
 ### Changed
 
@@ -14,6 +14,13 @@
   `ecdsa-rdfc-2019/` and `ecdsa-jcs-2019/` directories, each with its own
   subpath export (`@interop/ecdsa-signature/ecdsa-rdfc-2019`,
   `@interop/ecdsa-signature/ecdsa-jcs-2019`).
+- **BREAKING**: Require Node.js >= 24.
+- Convert the library source to TypeScript; the package now ships a built
+  `dist/` (with `.d.ts` type declarations) instead of raw `lib/` sources. The
+  public API and return shapes are unchanged.
+- Migrate the toolchain to the isomorphic-lib-template infrastructure: pnpm,
+  Vite/Vitest (Node tests), Playwright (browser tests), ESLint flat config, and
+  Prettier 3.
 
 ### Added
 
@@ -24,18 +31,6 @@
   class (e.g. `@interop/ezcap`'s `ZcapClient`).
 - The RDFC suite is now exported as `ecdsaRdfc2019`. The previous `cryptosuite`
   export is retained as a backward-compatible alias of it.
-
-## 1.3.1 - TBD
-
-### Changed
-
-- **BREAKING**: Require Node.js >= 24.
-- Convert the library source to TypeScript; the package now ships a built
-  `dist/` (with `.d.ts` type declarations) instead of raw `lib/` sources. The
-  public API and return shapes are unchanged.
-- Migrate the toolchain to the isomorphic-lib-template infrastructure: pnpm,
-  Vite/Vitest (Node tests), Playwright (browser tests), ESLint flat config, and
-  Prettier 3.
 
 ## 1.3.0 - 2026-02-05
 
