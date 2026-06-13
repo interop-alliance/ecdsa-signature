@@ -1,5 +1,11 @@
 # @interop/ecdsa-signature Changelog
 
+## 2.0.3 - 2026-06-
+
+### Changed
+
+- Update to `@interop/data-integrity-core@8.0.0` and related.
+
 ## 2.0.2 - 2026-06-09
 
 ### Changed
