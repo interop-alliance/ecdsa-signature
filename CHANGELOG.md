@@ -1,5 +1,12 @@
 # @interop/ecdsa-signature Changelog
 
+## 2.0.4 - 2026-06-13
+
+### Changed
+
+- Update to `@interop/data-integrity-core@8.0.0`, http-client and related.
+- Import dynamically `canonicalize` (fixes ESM-only issues).
+
 ## 2.0.3 - 2026-06-13
 
 ### Changed
