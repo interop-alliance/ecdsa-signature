@@ -225,6 +225,9 @@ cryptosuite is expected.
 
 PRs accepted.
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) -- code style and contribution
+conventions.
+
 ## License
 
 [New BSD License (3-clause)](LICENSE) © 2023 Digital Bazaar
