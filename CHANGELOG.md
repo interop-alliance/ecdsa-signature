@@ -1,6 +1,6 @@
 # @interop/ecdsa-signature Changelog
 
-## 2.0.7 - TBD
+## 2.0.7 - 2026-09-05
 
 ### Changed
 - Update to latest `@interop/ecdsa-multikey` and document loader dep.
