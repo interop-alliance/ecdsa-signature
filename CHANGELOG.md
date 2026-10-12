@@ -1,5 +1,10 @@
 # @interop/ecdsa-signature Changelog
 
+## 2.0.9 - TBD
+
+### Changed
+- Update to latest di core 8.9.0.
+
 ## 2.0.8 - 2026-09-25
 
 ### Changed
