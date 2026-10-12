@@ -1,6 +1,6 @@
 # @interop/ecdsa-signature Changelog
 
-## 2.0.10 - TBD
+## 2.0.10 - 2026-10-12
 
 ### Fixed
 - Fix lockfile.
